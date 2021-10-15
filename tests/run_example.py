@@ -90,12 +90,10 @@ if __name__ == "__main__":
 
     # Initialize MIRACLE
     miracle = MIRACLE(
-        num_train=X_MISSING.shape[0],
         num_inputs=X_MISSING.shape[1],
         reg_lambda=args.reg_lambda,
         reg_beta=args.reg_beta,
         n_hidden=32,
-        w_threshold=0.3,
         ckpt_file=args.ckpt_file,
         missing_list=missing_idxs,
         reg_m=0.1,
@@ -105,12 +103,12 @@ if __name__ == "__main__":
     )
 
     # Train MIRACLE
-    miracle_imputed_data_x, _pred_matrix, last_n = miracle.fit(
+    miracle_imputed_data_x = miracle.fit(
         X_MISSING,
         X_seed=imputed_data_x,
     )
 
     log.info(f"Baseline RMSE {miracle.rmse_loss(X_TRUTH, imputed_data_x, X_MASK)}")
     log.info(
-        f"MIRACLE RMSE {miracle.rmse_loss(X_TRUTH, miracle_imputed_data_x[:, : X_TRUTH.shape[1]], X_MASK)}"
+        f"MIRACLE RMSE {miracle.rmse_loss(X_TRUTH, miracle_imputed_data_x, X_MASK)}"
     )

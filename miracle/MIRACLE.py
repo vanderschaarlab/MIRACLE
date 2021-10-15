@@ -17,19 +17,14 @@ np.set_printoptions(linewidth=np.inf)
 class MIRACLE(object):
     def __init__(
         self,
-        num_train: int,
         lr: float = 0.001,
         batch_size: int = 32,
         num_inputs: int = 1,
         num_outputs: int = 1,
-        w_threshold: float = 0.3,
         n_hidden: int = 32,
-        hidden_layers: int = 2,
         ckpt_file: str = "tmp.ckpt",
-        standardize: bool = True,
         reg_lambda: float = 1,
         reg_beta: float = 1,
-        DAG_min: float = 0.5,
         DAG_only: bool = False,
         missing_list: list = list(range(1)),
         reg_m: float = 1.0,
@@ -42,8 +37,6 @@ class MIRACLE(object):
         Assume n_indicators is the number of variables at the RHS of adjacency matrix.
         """
         self.missing_list = missing_list
-        self.w_threshold = w_threshold
-        self.DAG_min = DAG_min
         self.learning_rate = lr
         self.reg_lambda = reg_lambda
         self.reg_beta = reg_beta
@@ -51,7 +44,6 @@ class MIRACLE(object):
         self.batch_size = batch_size
         self.num_inputs = num_inputs + num_inputs  # input + indicator
         self.n_hidden = n_hidden
-        self.hidden_layers = hidden_layers
         self.num_outputs = num_outputs
         self.X = tf.placeholder("float", [None, self.num_inputs])
         self.X_mask = tf.placeholder("float", [None, self.num_inputs])
@@ -93,7 +85,7 @@ class MIRACLE(object):
                 tf.random_normal([self.num_outputs], seed=seed)
             )
 
-        # The first and second layers are shared
+        # reg_lambda The first and second layers are shared
         self.weights.update(
             {
                 "w_h1": tf.Variable(tf.random_normal([self.n_hidden, self.n_hidden])),
@@ -437,7 +429,9 @@ class MIRACLE(object):
             [X_MASK, np.ones((X_MASK.shape[0], num_input_missing))], axis=1
         )
 
-        return self._fit(X_MISSING_c, X_MASK_c, X_seed=X_seed_c)
+        transformed, _, _ = self._fit(X_MISSING_c, X_MASK_c, X_seed=X_seed_c)
+
+        return transformed[:, : X_missing.shape[1]]
 
     def rmse_loss(
         self, ori_data: np.ndarray, imputed_data: np.ndarray, data_m: np.ndarray

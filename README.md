@@ -1,23 +1,30 @@
 # MIRACLE (Missing data Imputation Refinement And Causal LEarning)
 
-This is example code for running MIRACLE upon mean imputation.  
-This code has been inspired by the work of [1,2,3,4].
+[![Tests](https://github.com/vanderschaarlab/MIRACLE/actions/workflows/test_miracle.yml/badge.svg)](https://github.com/vanderschaarlab/MIRACLE/actions/workflows/test_miracle.yml)
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://github.com/vanderschaarlab/MIRACLE/blob/main/LICENSE)
 
+This is example code for running the MIRACLE algorithm. This code has been inspired by the work of [1,2,3,4].
 
-## Requirements 
+## Installation
 
-- Python 3.6+
-- `tensorflow`
-- `numpy`
-- `networkx`
-- `scikit-learn`
-- `pandas`
+```bash
+pip install -r requirements.txt
+pip install .
+```
+
+## Tests
+You can run the tests using
+```bash
+pip install -r requirements_dev.txt
+pip install .
+pytest -vsx
+```
 
 ## Contents
 
-- `MIRACLE.py` - Imputer/Refiner Class. This class takes a baseline imputation and returns a refined imputation. This code has been forked from [2].
-- `run_example.py` - runs a nonlinear toy DAG example.  Uses mean imputation as a baseline and applies MIRACLE to refine. 
-- `utils.py` 
+- `miracle/MIRACLE.py` - Imputer/Refiner Class. This class takes a baseline imputation and returns a refined imputation. This code has been forked from [2].
+- `miracle/third_party` - Reference imputers: Mean, Missforest, MICE, GAIN, Sinkhorn, KNN.
+- `tests/run_example.py` - runs a nonlinear toy DAG example.  Uses mean imputation as a baseline and applies MIRACLE to refine.  
 
 ## Examples
 

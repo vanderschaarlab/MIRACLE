@@ -246,8 +246,8 @@ class GainImputation(TransformerMixin):
             RuntimeError: if the result contains np.nans.
         """
         Xmiss = torch.tensor(np.asarray(Xmiss)).to(DEVICE)
-        assert self.norm_parameters is not None
-        assert self.model is not None
+        if self.norm_parameters is None or self.model is None:
+            raise RuntimeError("fit the model first")
 
         X = Xmiss.clone()
 

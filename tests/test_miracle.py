@@ -104,7 +104,6 @@ def test_fit() -> None:
 
 
 @pytest.mark.parametrize("seed", ["ot", "missforest", "mean", "mice", "gain", "knn"])
-@pytest.mark.xfail
 def test_imputers_sanity(seed: str) -> None:
     missing, truth, mask, indices = helper_generate_dummy_data()
 

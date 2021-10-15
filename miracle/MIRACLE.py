@@ -393,12 +393,12 @@ class MIRACLE(object):
 
             if len(avg_seed) >= self.window:
                 avg_seed.pop(0)
-            avg_seed.append(self.transform(X))
+            avg_seed.append(self._transform(X))
 
         if early_stopping:
             self.saver.restore(self.sess, self.tmp)
 
-        log.debug(self.transform(X))
+        log.debug(self._transform(X))
 
         X_pred = np.mean(np.array(avg_seed), axis=0)
         return X * X_mask + X_pred * (1 - X_mask), X_pred, avg_seed
@@ -440,7 +440,7 @@ class MIRACLE(object):
         denominator = np.sum(1 - data_m)
         return np.sqrt(numerator / float(denominator))
 
-    def transform(self, X: np.ndarray) -> np.ndarray:
+    def _transform(self, X: np.ndarray) -> np.ndarray:
         return self.sess.run(
             self.Out,
             feed_dict={

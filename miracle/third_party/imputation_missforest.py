@@ -28,14 +28,16 @@ class MissForestImputation:
     def __init__(
         self,
         n_estimators: int = 10,
-        max_iter: int = 10000,
+        max_iter: int = 100,
         random_state: Union[int, None] = None,
     ) -> None:
         if not random_state:
             random_state = int(time.time())
 
         estimator_rf = ExtraTreesRegressor(
-            n_estimators=n_estimators, random_state=random_state
+            n_estimators=n_estimators,
+            random_state=random_state,
+            max_depth=5,
         )
         self._model = IterativeImputer(
             estimator=estimator_rf, random_state=random_state, max_iter=max_iter
@@ -47,7 +49,7 @@ class MissForestImputation:
         return self
 
     def transform(self, X: np.ndarray) -> np.ndarray:
-        return self._model.transform(np.ndarray(X))
+        return self._model.transform(np.asarray(X))
 
     def fit_transform(self, X: np.ndarray) -> np.ndarray:
         return self.fit(X).transform(X)

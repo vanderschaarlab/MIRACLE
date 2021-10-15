@@ -1,8 +1,11 @@
+import random
 from typing import Any
 
 import networkx as nx
 import numpy as np
 import pandas as pd
+import tensorflow.compat.v1 as tf
+import torch
 
 np.set_printoptions(suppress=True)
 # This function generates data according to a DAG provided in list_vertex and list_edges with mean and variance as input
@@ -76,3 +79,10 @@ def binary_sampler(p: float, rows: int, cols: int) -> np.ndarray:
     unif_random_matrix = np.random.uniform(0.0, 1.0, size=[rows, cols])
     binary_random_matrix = 1 * (unif_random_matrix < p)
     return binary_random_matrix
+
+
+def enable_reproducible_results(seed: int = 42) -> None:
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    random.seed(seed)
+    tf.random.set_random_seed(seed)

@@ -2,7 +2,6 @@
 from typing import Any
 
 import numpy as np
-import pandas as pd
 import torch
 
 # third party
@@ -64,8 +63,8 @@ class SinkhornImputation(TransformerMixin):
             "sinkhorn", p=2, blur=eps, scaling=scaling, backend="tensorized"
         )
 
-    def fit_transform(self, X: pd.DataFrame, *args: Any, **kwargs: Any) -> pd.DataFrame:
-        X = torch.tensor(X.values)
+    def fit_transform(self, X: np.ndarray, *args: Any, **kwargs: Any) -> np.ndarray:
+        X = torch.tensor(np.asarray(X))
         X = X.clone()
         n, d = X.shape
 

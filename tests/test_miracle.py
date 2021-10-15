@@ -2,24 +2,29 @@ import sys
 
 import networkx as nx
 import numpy as np
+import pytest
 import tensorflow.compat.v1 as tf
 from sklearn.preprocessing import StandardScaler
-from utils import binary_sampler, gen_data_nonlinear
+from utils import binary_sampler, enable_reproducible_results, gen_data_nonlinear
 
 import miracle.logger as log
 from miracle import MIRACLE
+from miracle.third_party import load_imputer
 
 tf.disable_v2_behavior()
 np.set_printoptions(suppress=True)
 log.add(sink=sys.stderr, level="INFO")
 
+enable_reproducible_results(0)
+
 
 def helper_generate_dummy_data(
     dataset_sz: int = 1000,
     missingness: float = 0.2,
+    feature_size: int = 10,
 ) -> tuple:
     G = nx.DiGraph()
-    for i in range(10):
+    for i in range(feature_size):
         G.add_node(i)
     G.add_edge(1, 2)
     G.add_edge(1, 3)
@@ -96,3 +101,95 @@ def test_fit() -> None:
     assert np.isnan(miracle_imputed_data_x).sum() == 0
 
     assert miracle.rmse_loss(truth, miracle_imputed_data_x, mask)
+
+
+@pytest.mark.parametrize("seed", ["ot", "missforest", "mean", "mice", "gain", "knn"])
+@pytest.mark.xfail
+def test_imputers_sanity(seed: str) -> None:
+    missing, truth, mask, indices = helper_generate_dummy_data()
+
+    seed_imputer = load_imputer(seed)
+
+    X_seed = seed_imputer.fit_transform(missing)
+
+    miracle = MIRACLE(
+        num_inputs=missing.shape[1],
+        missing_list=indices,
+        max_steps=300,
+    )
+
+    miracle_imputed_data_x = miracle.fit(missing, X_seed=X_seed)
+
+    baseline_rmse = miracle.rmse_loss(truth, X_seed, mask)
+    miracle_rmse = miracle.rmse_loss(truth, miracle_imputed_data_x, mask)
+
+    assert baseline_rmse < 2
+    assert miracle_rmse < 2
+
+
+@pytest.mark.parametrize("dataset_sz", [1000, 3000, 5000])
+@pytest.mark.parametrize("seed", ["ot", "missforest", "mean", "mice", "gain", "knn"])
+@pytest.mark.slow
+def test_experiments_dataset_size(dataset_sz: int, seed: str) -> None:
+    missing, truth, mask, indices = helper_generate_dummy_data(dataset_sz=dataset_sz)
+    seed_imputer = load_imputer(seed)
+
+    X_seed = seed_imputer.fit_transform(missing)
+
+    miracle = MIRACLE(
+        num_inputs=missing.shape[1],
+        missing_list=indices,
+    )
+
+    miracle_imputed_data_x = miracle.fit(missing, X_seed=X_seed)
+
+    baseline_rmse = miracle.rmse_loss(truth, X_seed, mask)
+    miracle_rmse = miracle.rmse_loss(truth, miracle_imputed_data_x, mask)
+
+    assert baseline_rmse > miracle_rmse
+
+
+@pytest.mark.parametrize("missingness", [0.2, 0.4, 0.7])
+@pytest.mark.parametrize("seed", ["ot", "missforest", "mean", "mice", "gain", "knn"])
+@pytest.mark.slow
+def test_experiments_missingness(missingness: float, seed: str) -> None:
+    missing, truth, mask, indices = helper_generate_dummy_data(missingness=missingness)
+    seed_imputer = load_imputer(seed)
+
+    X_seed = seed_imputer.fit_transform(missing)
+
+    miracle = MIRACLE(
+        num_inputs=missing.shape[1],
+        missing_list=indices,
+    )
+
+    miracle_imputed_data_x = miracle.fit(missing, X_seed=X_seed)
+
+    baseline_rmse = miracle.rmse_loss(truth, X_seed, mask)
+    miracle_rmse = miracle.rmse_loss(truth, miracle_imputed_data_x, mask)
+
+    assert baseline_rmse > miracle_rmse
+
+
+@pytest.mark.parametrize("feature_size", [10, 50, 100])
+@pytest.mark.parametrize("seed", ["ot", "missforest", "mean", "mice", "gain", "knn"])
+@pytest.mark.slow
+def test_experiments_feature_size(feature_size: int, seed: str) -> None:
+    missing, truth, mask, indices = helper_generate_dummy_data(
+        feature_size=feature_size
+    )
+    seed_imputer = load_imputer(seed)
+
+    X_seed = seed_imputer.fit_transform(missing)
+
+    miracle = MIRACLE(
+        num_inputs=missing.shape[1],
+        missing_list=indices,
+    )
+
+    miracle_imputed_data_x = miracle.fit(missing, X_seed=X_seed)
+
+    baseline_rmse = miracle.rmse_loss(truth, X_seed, mask)
+    miracle_rmse = miracle.rmse_loss(truth, miracle_imputed_data_x, mask)
+
+    assert baseline_rmse > miracle_rmse

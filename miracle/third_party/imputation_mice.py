@@ -48,7 +48,7 @@ class MiceImputation:
 
     def fit(self, X: np.ndarray, *args: Any, **kwargs: Any) -> "MiceImputation":
         for model in self._models:
-            model.fit(np.ndarray(X), *args, **kwargs)
+            model.fit(np.asarray(X), *args, **kwargs)
 
         return self
 

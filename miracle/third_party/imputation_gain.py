@@ -297,5 +297,5 @@ class GainImputation(TransformerMixin):
         Returns:
             Xhat: The imputed dataset.
         """
-        X = torch.tensor(X.values).to(DEVICE)
-        return self.fit(X).transform(X).detach().cpu().numpy()
+        X = torch.tensor(np.asarray(X)).to(DEVICE)
+        return self.fit(X).transform(X)

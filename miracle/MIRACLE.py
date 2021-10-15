@@ -339,7 +339,7 @@ class MIRACLE(object):
                 X_pred = np.mean(np.array(avg_seed), axis=0)
                 X = X * X_mask + X_pred * (1 - X_mask)
                 if step % 10 == 0:
-                    log.info(f"step {step}, of {self.max_steps} steps")
+                    log.info(f"step {step}/{self.max_steps}")
 
             h_value, loss = self.sess.run(
                 [self.h, self.supervised_loss],
@@ -404,7 +404,10 @@ class MIRACLE(object):
         return X * X_mask + X_pred * (1 - X_mask), X_pred, avg_seed
 
     def fit(
-        self, X_missing: np.ndarray, X_seed: Optional[np.ndarray] = None
+        self,
+        X_missing: np.ndarray,
+        X_seed: Optional[np.ndarray] = None,
+        early_stopping: bool = False,
     ) -> np.ndarray:
         if X_seed is None:
             X_seed = X_missing.copy()
@@ -429,7 +432,9 @@ class MIRACLE(object):
             [X_MASK, np.ones((X_MASK.shape[0], num_input_missing))], axis=1
         )
 
-        transformed, _, _ = self._fit(X_MISSING_c, X_MASK_c, X_seed=X_seed_c)
+        transformed, _, _ = self._fit(
+            X_MISSING_c, X_MASK_c, X_seed=X_seed_c, early_stopping=early_stopping
+        )
 
         return transformed[:, : X_missing.shape[1]]
 

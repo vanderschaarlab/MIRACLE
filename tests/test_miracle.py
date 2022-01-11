@@ -76,7 +76,7 @@ def test_sanity() -> None:
     assert ctx.reg_beta == 0.9
     assert ctx.reg_m == 10.0
     assert ctx.batch_size == 4
-    assert ctx.num_inputs == 5 + 5  # input + indicator
+    assert ctx.num_inputs == 5 + 1  # input + indicator
     assert ctx.num_outputs == 1
     assert ctx.n_hidden == 7
     assert ctx.missing_list == [1]

@@ -2,4 +2,4 @@ loguru
 numpy
 pandas
 scikit-learn
-tensorflow
+tensorflow>=2.0

@@ -2,7 +2,8 @@ name: MIRACLE Package release
 
 on:
   release:
-    types: [created]
+    types: [created, published]
+  workflow_dispatch:
 
 
 jobs:

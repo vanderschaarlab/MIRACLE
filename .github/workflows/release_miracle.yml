@@ -40,7 +40,8 @@ jobs:
     runs-on: ubuntu-latest
     container: quay.io/pypa/manylinux2014_x86_64
     steps:
-      - uses: actions/checkout@v4
+      # NOTE: It appears upgrading to newer versions of actions/checkout breaks the Linux build. Keep at v1.
+      - uses: actions/checkout@v1
         with:
           submodules: true
       - name: Set target Python version PATH

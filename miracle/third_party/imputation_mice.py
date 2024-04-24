@@ -9,13 +9,19 @@ from sklearn.impute import IterativeImputer
 
 
 class MiceImputation:
-    """Imputation plugin for completing missing values using the Multivariate Iterative chained equations and multiple imputations.
+    """Imputation plugin for completing missing values using the Multivariate Iterative chained equations and multiple \
+    imputations.
 
     Method:
-        Multivariate Iterative chained equations(MICE) methods model each feature with missing values as a function of other features in a round-robin fashion. For each step of the round-robin imputation, we use a BayesianRidge estimator, which does a regularized linear regression.
-        The class `sklearn.impute.IterativeImputer` is able to generate multiple imputations of the same incomplete dataset. We can then learn a regression or classification model on different imputations of the same dataset.
-        Setting `sample_posterior=True` for the IterativeImputer will randomly draw values to fill each missing value from the Gaussian posterior of the predictions. If each `IterativeImputer` uses a different `random_state`, this results in multiple imputations, each of which can be used to train a predictive model.
-        The final result is the average of all the `n_imputation` estimates.
+        Multivariate Iterative chained equations(MICE) methods model each feature with missing values as a function of \
+        other features in a round-robin fashion. For each step of the round-robin imputation, we use a BayesianRidge \
+        estimator, which does a regularized linear regression. The class `sklearn.impute.IterativeImputer` is able to \
+        generate multiple imputations of the same incomplete dataset. We can then learn a regression or classification \
+        model on different imputations of the same dataset. Setting `sample_posterior=True` for the IterativeImputer \
+        will randomly draw values to fill each missing value from the Gaussian posterior of the predictions. \
+        If each `IterativeImputer` uses a different `random_state`, this results in multiple imputations, each of \
+        which can be used to train a predictive model. The final result is the average of all the `n_imputation` \
+        estimates.
 
     Args:
         n_imputations: int, default=5i

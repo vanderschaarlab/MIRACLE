@@ -13,7 +13,9 @@ class MissForestImputation:
     """Imputation plugin for completing missing values using the MissForest strategy.
 
     Method:
-        Iterative chained equations(ICE) methods model each feature with missing values as a function of other features in a round-robin fashion. For each step of the round-robin imputation, we use a ExtraTreesRegressor, which fits a number of randomized extra-trees and averages the results.
+        Iterative chained equations(ICE) methods model each feature with missing values as a function of other \
+        features in a round-robin fashion. For each step of the round-robin imputation, we use a ExtraTreesRegressor, \
+        which fits a number of randomized extra-trees and averages the results.
 
     Args:
         n_estimators: int, default=10

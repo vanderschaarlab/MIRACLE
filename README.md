@@ -14,6 +14,11 @@ pip install -r requirements.txt
 pip install .
 ```
 
+### CUDA support (optional)
+For CUDA support, you should make sure [TensorFlow 2 CUDA requirements](https://www.tensorflow.org/install/pip) are met.
+
+Install the library as above, then install the CUDA enabled version of TensorFlow by following the [official instructions](https://www.tensorflow.org/install/pip).
+
 ## Tests
 You can run the tests using
 ```bash
